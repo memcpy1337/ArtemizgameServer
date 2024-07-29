@@ -37,8 +37,9 @@ public static class ServiceCollectionExtension
         services.AddTransient<IServerRepository, ServerRepository>();
         services.AddTransient<ITokenGenerationService, TokenGenerationService>();
         services.AddScoped<IServerHttpClient<EdgeGapDeploymentResult>, EdgeGapHttpClient>();
-        var edgeGapSettings = new EdgeGapSettings();
+
 #if DEBUG
+        var edgeGapSettings = new EdgeGapSettings();
         configuration.GetSection("EdgeGapSettings").Bind(edgeGapSettings);
         edgeGapSettings.BaseUrl = configuration.GetValue<string>("EdgeGapSettings:BaseUrl");
         edgeGapSettings.Token = configuration.GetValue<string>("EdgeGapSettings:Token");
