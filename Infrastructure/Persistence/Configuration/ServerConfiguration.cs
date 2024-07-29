@@ -13,5 +13,7 @@ public class ServerConfiguration : IEntityTypeConfiguration<Server>
         builder.HasIndex(x => x.ServerId).IsUnique();
 
         builder.HasIndex(x => x.MatchId).IsUnique(false);
+
+        builder.HasOne(e => e.ConnectionData).WithOne(s => s.Server).HasForeignKey<ConnectionData>(e => e.ServerId).IsRequired();
     }
 }

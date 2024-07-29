@@ -33,10 +33,10 @@ public static class ServiceCollectionExtension
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddTransient<IDeploymentPublisher, DeploymentPublisher>();
+        services.AddTransient<IServerPublisher, ServerPublisher>();
         services.AddTransient<IServerRepository, ServerRepository>();
         services.AddTransient<ITokenGenerationService, TokenGenerationService>();
         services.AddScoped<IServerHttpClient<EdgeGapDeploymentResult>, EdgeGapHttpClient>();
-
         var edgeGapSettings = new EdgeGapSettings();
 #if DEBUG
         configuration.GetSection("EdgeGapSettings").Bind(edgeGapSettings);

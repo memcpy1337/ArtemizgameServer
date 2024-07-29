@@ -1,4 +1,5 @@
 ﻿using Contracts.Common.Models.Enums;
+using Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Application.Common.Interfaces;
 
-public interface IServerService
+public interface IServerPublisher
 {
-    Task Up(string serverId);
-    Task Down(string serverId);
+    Task ServerUp(Server server);
+    Task ServerBadDown(string serverId, ServerDownStatusEnum status);
     Task PlayerConnected(string serverId, string userId);
     Task PlayerDisconnected(string serverId, string userId);
 }

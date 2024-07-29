@@ -34,18 +34,18 @@ public class Program
             var host = CreateHostBuilder(args).Build();
             using var scope = host.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider;
-            //try
-            //{
-            //    var context = serviceProvider.GetService<ApplicationDbContext>();
-            //    if (context!.Database.IsNpgsql())
-            //        await context.Database.MigrateAsync();
-            //    // Seed database here
-            //}
-            //catch (Exception e)
-            //{
-            //    Log.Fatal(e,"An error occurred while migrating the database.");
-            //    throw;
-            //}
+            try
+            {
+                var context = serviceProvider.GetService<ApplicationDbContext>();
+                if (context!.Database.IsNpgsql())
+                    await context.Database.MigrateAsync();
+                // Seed database here
+            }
+            catch (Exception e)
+            {
+                Log.Fatal(e, "An error occurred while migrating the database.");
+                throw;
+            }
 
             await host.RunAsync();
         }

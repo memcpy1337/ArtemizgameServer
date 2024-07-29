@@ -10,9 +10,8 @@ public class Server
     public required string ExternalRequestId { get; set; }
     public bool IsReady { get; set; } = false;
     public bool IsActive { get; set; } = false;
-    public string Ip { get; set; } = string.Empty;
-    public int Port { get; set; }
-    public ServerStatus ServerStatus { get; set; } = ServerStatus.NA;
+    public ConnectionData? ConnectionData { get; set; }
+    public ServerStatus DeployStatus { get; set; } = ServerStatus.NA;
 }
 
 public enum ServerStatus

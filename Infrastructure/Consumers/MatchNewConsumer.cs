@@ -13,16 +13,16 @@ namespace Infrastructure.Consumers;
 
 public sealed class MatchNewConsumer : IConsumer<MatchNewEvent>
 {
-    private readonly IServerService _serverService;
-    public MatchNewConsumer(IServerService serverService)
+    private readonly IDeployService _deployService;
+    public MatchNewConsumer(IDeployService serverService)
     {
-        _serverService = serverService;
+        _deployService = serverService;
     }
 
     public async Task Consume(ConsumeContext<MatchNewEvent> context)
     {
         var match = context.Message.Adapt<MatchNewDTO>();
 
-        await _serverService.CreateServer(match);
+        await _deployService.Deploy(match);
     }
 }

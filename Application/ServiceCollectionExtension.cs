@@ -29,6 +29,7 @@ public static class ServiceCollectionExtension
     {
         services.AddSingleton(TypeAdapterConfig.GlobalSettings);
         services.AddScoped<ICloudServiceProvider<EdgeGapDeploymentResult>, EdgeGapService>();
+        services.AddScoped<IDeployService, DeployService>();
         services.AddScoped<IServerService, ServerService>();
 
         services.AddScoped<IMapper, ServiceMapper>();

@@ -1,65 +1,48 @@
-﻿using Application.Common.DTOs;
-using Application.Common.Interfaces;
-using Application.Common.Models;
-using Application.Models.EdgeGap;
-using Domain.Entities;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Application.Common.Interfaces;
+using Contracts.Common.Models.Enums;
 using System.Threading.Tasks;
 
 namespace Application.Services;
 
 public class ServerService : IServerService
 {
-    private readonly ICloudServiceProvider<EdgeGapDeploymentResult> _cloudServiceProvider;
-    private readonly IDeploymentPublisher _deploymentPublisher;
     private readonly IServerRepository _serverRepository;
-    private readonly ITokenGenerationService _tokenGeneration;
+    private readonly IServerPublisher _serverPublisher;
 
-    private static string TOKEN_ERR_MSG = "Secure token failed to generate";
-
-    public ServerService(ICloudServiceProvider<EdgeGapDeploymentResult> cloudServiceProvider, 
-        IDeploymentPublisher deploymentPublisher, 
-        IServerRepository serverRepository,
-        ITokenGenerationService tokenGenerationService)
+    public ServerService(IServerRepository serverRepository, IServerPublisher serverPublisher)
     {
-        _cloudServiceProvider = cloudServiceProvider;
-        _deploymentPublisher = deploymentPublisher;
         _serverRepository = serverRepository;
-        _tokenGeneration = tokenGenerationService;
+        _serverPublisher = serverPublisher;
     }
 
-    public async Task CreateServer(MatchNewDTO match)
+    public async Task Up(string serverId)
     {
-        string serverId = Guid.NewGuid().ToString();
+        await _serverRepository.SetServerReady(serverId);
 
-        var serverToken = await _tokenGeneration.GetTokenServer(serverId);
+        var server = await _serverRepository.GetByServerId(serverId);
 
-        if (serverToken == null)
+        await _serverPublisher.ServerUp(server);
+    }
+
+    public async Task PlayerConnected(string serverId, string userId)
+    {
+        await _serverPublisher.PlayerConnected(serverId, userId);
+    }
+
+    public async Task PlayerDisconnected(string serverId, string userId)
+    {
+        await _serverPublisher.PlayerDisconnected(serverId, userId);
+    }
+
+    public async Task Down(string serverId)
+    {
+        var server = await _serverRepository.GetByServerId(serverId);
+        //Bad down
+        if (server.IsActive)
         {
-            await _deploymentPublisher.DeploymentFailed(match.MatchId, TOKEN_ERR_MSG);
-            return;
+            await _serverRepository.SetServerInactive(serverId);
+            await _serverPublisher.ServerBadDown(serverId, ServerDownStatusEnum.DisconnectedFromMaster);
         }
 
-        var deploymentResult = await _cloudServiceProvider.RequestNewServer(match, serverId, serverToken);
-
-        if (string.IsNullOrEmpty(deploymentResult.ErrorMsg) == false)
-        {
-            await _deploymentPublisher.DeploymentFailed(match.MatchId, deploymentResult.ErrorMsg);
-            return;
-        }
-
-        await _serverRepository.Create(new Server()
-        {
-            ExternalRequestId = deploymentResult.RequestId,
-            MatchId = match.MatchId,
-            ServerId = serverId,
-            ServerStatus = ServerStatus.Initializing
-        });
-
-        await _deploymentPublisher.DeploymentSuccess(match.MatchId);
     }
 }
