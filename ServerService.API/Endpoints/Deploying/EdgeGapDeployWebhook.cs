@@ -17,7 +17,7 @@ public class EdgeGapDeployWebhook : EndpointBaseAsync
     public EdgeGapDeployWebhook(IMediator mediator) => _mediator = mediator;
 
     [HttpPost, Produces("application/json"), Consumes("application/json")]
-    public override async Task<ActionResult> HandleAsync(EdgeGapDeploymentWebhookModel request, CancellationToken cancellationToken = new())
+    public override async Task<ActionResult> HandleAsync([FromBody] EdgeGapDeploymentWebhookModel request, CancellationToken cancellationToken = new())
     {
         await _mediator.Send(new EdgeGapDeployWebhookCommand(request), cancellationToken);
         return NoContent();
