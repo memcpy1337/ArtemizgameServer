@@ -9,7 +9,7 @@ namespace API.Endpoints.Deploying;
 
 [Route(DeployingRoute.EdgeGapWebhook)]
 public class EdgeGapDeployWebhook : EndpointBaseAsync
-    .WithRequest<EdgeGapDeploymentWebhookModel>
+    .WithRequest<string>
     .WithoutResult
 {
     private readonly IMediator _mediator;
@@ -17,10 +17,10 @@ public class EdgeGapDeployWebhook : EndpointBaseAsync
     public EdgeGapDeployWebhook(IMediator mediator) => _mediator = mediator;
 
     [HttpPost, Produces("application/json"), Consumes("application/json")]
-    public override async Task<ActionResult> HandleAsync([FromBody] EdgeGapDeploymentWebhookModel request, CancellationToken cancellationToken = new())
+    public override async Task<ActionResult> HandleAsync([FromBody] string data /*[FromBody] EdgeGapDeploymentWebhookModel request*/, CancellationToken cancellationToken = new())
     {
-        Console.WriteLine(request);
-        await _mediator.Send(new EdgeGapDeployWebhookCommand(request), cancellationToken);
+        Console.WriteLine(data);
+        await _mediator.Send(new EdgeGapDeployWebhookCommand(new EdgeGapDeploymentWebhookModel()), cancellationToken);
         return NoContent();
     }
 }
