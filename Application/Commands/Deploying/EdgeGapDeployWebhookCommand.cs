@@ -4,6 +4,7 @@ using Application.Common.Models.EdgeGap;
 using Application.Common.Wrappers;
 using Domain.Entities;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +20,19 @@ public record EdgeGapDeployWebhookCommand(EdgeGapDeploymentWebhookModel WebHookD
 internal sealed class EdgeGapDeployWebhookCommandHandler : IHandlerWrapper<EdgeGapDeployWebhookCommand, Unit>
 {
     private readonly IDeployService _deployService;
-    public EdgeGapDeployWebhookCommandHandler(IDeployService deployService)
+    private readonly ILogger<EdgeGapDeploymentWebhookModel> _logger;
+
+    public EdgeGapDeployWebhookCommandHandler(IDeployService deployService, ILogger<EdgeGapDeploymentWebhookModel> logger)
     {
         _deployService = deployService;
+        _logger = logger;
     }
 
     public async Task<IResponse<Unit>> Handle(EdgeGapDeployWebhookCommand request, CancellationToken cancellationToken)
     {
         var data = request.WebHookData;
+
+        _logger.LogInformation($"NEW STATUS FOR {request.WebHookData.RequestId}. STATUS: {request.WebHookData.CurrentStatusLabel}");
 
         var newState = StatusFromStringToEnum(data.CurrentStatusLabel!);
 

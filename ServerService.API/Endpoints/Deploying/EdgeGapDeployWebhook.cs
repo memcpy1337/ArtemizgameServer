@@ -19,6 +19,7 @@ public class EdgeGapDeployWebhook : EndpointBaseAsync
     [HttpPost, Produces("application/json"), Consumes("application/json")]
     public override async Task<ActionResult> HandleAsync([FromBody] EdgeGapDeploymentWebhookModel request, CancellationToken cancellationToken = new())
     {
+        Console.WriteLine(request);
         await _mediator.Send(new EdgeGapDeployWebhookCommand(request), cancellationToken);
         return NoContent();
     }
