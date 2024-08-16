@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Contracts.Common.Models.Enums;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -11,7 +12,7 @@ using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredCla
 
 namespace Infrastructure.SignalRHubs;
 
-public class ServerHub : Hub
+public class ServerHub : Hub<IServerHubClient>
 {
     private readonly IDatabase _database;
     private readonly IServerService _serverService;
@@ -41,42 +42,49 @@ public class ServerHub : Hub
 
         _logger.LogInformation($"Server connected. Id: {serverId}. ConnId: {connectionId}");
 
-        await _serverService.Up(serverId!);
+        await _serverService.UpEvent(serverId!);
     }
 
     public override async Task OnDisconnectedAsync(Exception exception)
     {
         var serverId = Context.User!.Identity!.Name;
 
+        if (serverId == null)
+            return;
+
+        _logger.LogInformation($"Server {serverId} disconnect from hub");
+
         await _database.KeyDeleteAsync($"SignalRConnection:{serverId}");
 
         await base.OnDisconnectedAsync(exception);
 
-        await _serverService.Down(serverId);
+        await _serverService.DownEvent(serverId);
     }
 
     public async Task PlayerConnected(string userId)
     {
         var serverId = Context.User!.Identity!.Name;
+        if (serverId == null)
+            return;
 
-        await _serverService.PlayerConnected(serverId, userId);
+        await _serverService.PlayerConnectedEvent(serverId, userId);
     }
 
     public async Task PlayerDisconnected(string userId)
     {
         var serverId = Context.User!.Identity!.Name;
+        if (serverId == null)
+            return;
 
-        await _serverService.PlayerDisconnected(serverId, userId);
+        await _serverService.PlayerDisconnectedEvent(serverId, userId);
     }
 
-    public async Task SendMessageToUser(string userId, string message)
+    public async Task GameEnd(PlayerTypeEnum wonSide)
     {
-        var connectionId = await _database.StringGetAsync($"SignalRConnection:{userId}");
+        var serverId = Context.User!.Identity!.Name;
+        if (serverId == null)
+            return;
 
-        if (!string.IsNullOrEmpty(connectionId))
-        {
-            await Clients.Client(connectionId).SendAsync("ReceiveMessage", message);
-        }
+        await _serverService.GameEndEvent(serverId, wonSide);
     }
-
 }

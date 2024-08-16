@@ -13,4 +13,5 @@ public interface IDeployService
     Task Deploy(MatchNewDTO match);
     Task SetConnectionData(string deploymentId, string address, int port);
     Task UpdateStatus(string deploymentId, ServerStatus newStatus);
+    Task RemoveDeploy(string deploymentId);
 }

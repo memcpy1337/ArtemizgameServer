@@ -11,7 +11,8 @@ namespace Application.Common.Interfaces;
 public interface IServerPublisher
 {
     Task ServerUp(Server server);
-    Task ServerBadDown(string serverId, ServerDownStatusEnum status);
+    Task ServerRequestGameEnd(string matchId, PlayerTypeEnum wonSide);
+    Task ServerBadDown(string serverId, string matchId, ServerDownStatusEnum status);
     Task PlayerConnected(string serverId, string userId);
     Task PlayerDisconnected(string serverId, string userId);
 }

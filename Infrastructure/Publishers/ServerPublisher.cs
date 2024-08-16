@@ -36,11 +36,21 @@ public class ServerPublisher : IServerPublisher
         await _publishEndpoint.Publish<ServerPlayerDisconnectedEvent>(new ServerPlayerDisconnectedEvent() { ServerId = serverId, UserId = userId });
     }
 
-    public async Task ServerBadDown(string serverId, ServerDownStatusEnum status)
+    public async Task ServerBadDown(string serverId, string matchId, ServerDownStatusEnum status)
     {
         await _publishEndpoint.Publish<ServerBadDownEvent>(new ServerBadDownEvent() { 
             ServerId =  serverId, 
+            MatchId = matchId,
             Status = status
+        });
+    }
+
+    public async Task ServerRequestGameEnd(string matchId, PlayerTypeEnum wonSide)
+    {
+        await _publishEndpoint.Publish<ServerGameEndEvent>(new ServerGameEndEvent()
+        {
+            ServerId = matchId, // NEED RENAME PROPERTY
+            WonSide = wonSide
         });
     }
 }

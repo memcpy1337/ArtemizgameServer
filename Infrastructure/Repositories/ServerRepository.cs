@@ -26,6 +26,11 @@ public class ServerRepository : IServerRepository
         await _context.SaveChangesAsync(CancellationToken.None);
     }
 
+    public async Task<Server?> GetByMatchId(string matchId)
+    {
+        return await _context.Servers.FirstOrDefaultAsync(s => s.MatchId == matchId && s.IsActive);
+    }
+
     public async Task<Server> GetByServerId(string serverId)
     {
         return await _context.Servers.Include(s => s.ConnectionData).SingleAsync(s => s.ServerId == serverId);
@@ -38,8 +43,14 @@ public class ServerRepository : IServerRepository
 
     public async Task SetConnectionData(string requestId, ConnectionData connectionData)
     {
-        await _context.Servers.Where(x => x.ExternalRequestId == requestId && x.IsActive)
-            .ExecuteUpdateAsync(b => b.SetProperty(u => u.ConnectionData, connectionData));
+        var server = await _context.Servers.FirstOrDefaultAsync(x => x.ExternalRequestId == requestId && x.IsActive);
+
+        if (server == null)
+            return;
+
+        server.ConnectionData = connectionData;
+
+        _context.Servers.Update(server);
 
         await _context.SaveChangesAsync(CancellationToken.None);
     }

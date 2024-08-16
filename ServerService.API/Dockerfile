@@ -1,6 +1,6 @@
 # Base image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
+USER root
 WORKDIR /app
 EXPOSE 6002
 

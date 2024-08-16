@@ -8,5 +8,5 @@ namespace Application.Common.Interfaces;
 
 public interface ITokenGenerationService
 {
-    Task<string?> GetTokenServer(string serverId);
+    Task<string?> GetTokenServer(string serverId, string matchId);
 }

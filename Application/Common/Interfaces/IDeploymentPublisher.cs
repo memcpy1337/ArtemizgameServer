@@ -10,4 +10,5 @@ public interface IDeploymentPublisher
 {
     Task DeploymentFailed(string matchId, string message);
     Task DeploymentSuccess(string matchId);
+    Task DeploymentConnectionDataUpdate(string serverId, string matchId, string address, int port);
 }

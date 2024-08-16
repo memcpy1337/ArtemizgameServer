@@ -22,9 +22,9 @@ public sealed class EdgeGapService : ICloudServiceProvider<EdgeGapDeploymentResu
         HttpClient = httpClient;
     }
 
-    public Task DeleteServer(string matchId)
+    public async Task DeleteServer(string requestId)
     {
-        throw new System.NotImplementedException();
+        await HttpClient.DestroyDeploy(requestId);
     }
 
     public async Task<EdgeGapDeploymentResult> RequestNewServer(MatchNewDTO match, string serverId, string serverToken)

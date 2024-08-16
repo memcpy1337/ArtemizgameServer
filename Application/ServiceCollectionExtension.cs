@@ -1,6 +1,7 @@
 using Application.Common.Behaviours;
 using Application.Common.Interfaces;
 using Application.Common.Models;
+using Application.Common.Models.EdgeGap;
 using Application.Models.EdgeGap;
 using Application.Services;
 using FluentValidation;
@@ -29,6 +30,7 @@ public static class ServiceCollectionExtension
     {
         services.AddSingleton(TypeAdapterConfig.GlobalSettings);
         services.AddScoped<ICloudServiceProvider<EdgeGapDeploymentResult>, EdgeGapService>();
+        services.AddScoped<ICloudServiceProvider<DebugDeploymentResult>, DebugCloudService>();
         services.AddScoped<IDeployService, DeployService>();
         services.AddScoped<IServerService, ServerService>();
 

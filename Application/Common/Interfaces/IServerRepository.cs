@@ -16,4 +16,5 @@ public interface IServerRepository
     Task SetServerReady(string serverId);
     Task<Server> GetByServerId(string serverId);
     Task SetServerInactive(string serverId);
+    Task<Server?> GetByMatchId(string matchId);
 }

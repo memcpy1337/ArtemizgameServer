@@ -35,4 +35,15 @@ public class DeploymentPublisher : IDeploymentPublisher
             IsSuccess = true
         });
     }
+
+    public async Task DeploymentConnectionDataUpdate(string serverId, string matchId, string address, int port)
+    {
+        await _publishEndpoint.Publish<ServerConnectionDataUpdateEvent>(new ServerConnectionDataUpdateEvent()
+        {
+            MatchId = matchId,
+            ServerId = serverId,
+            Address = address,
+            Port = port
+        });
+    }
 }

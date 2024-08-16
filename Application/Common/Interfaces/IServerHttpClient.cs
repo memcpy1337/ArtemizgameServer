@@ -11,5 +11,5 @@ namespace Application.Common.Interfaces;
 public interface IServerHttpClient<T> where T : DeploymentResult
 {
     Task<T> NewDeployment(GameTypeEnum gameType, string serverId, string serverToken, string appName, string appVersion, List<string> ipClients, string webHook);
-    Task<bool> DestroyDeploy(string serverId);
+    Task DestroyDeploy(string requestId);
 }

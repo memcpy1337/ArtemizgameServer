@@ -8,6 +8,7 @@ using Infrastructure.Persistence;
 using Infrastructure.Publishers;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
+using Infrastructure.SignalRHubs.MessageBus;
 using MassTransit;
 using MassTransit.EntityFrameworkCoreIntegration;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,7 @@ public static class ServiceCollectionExtension
         services.AddTransient<IServerRepository, ServerRepository>();
         services.AddTransient<ITokenGenerationService, TokenGenerationService>();
         services.AddScoped<IServerHttpClient<EdgeGapDeploymentResult>, EdgeGapHttpClient>();
+        services.AddTransient<IServerNotifierService, ServerNotifierService>();
 
 #if DEBUG
         var edgeGapSettings = new EdgeGapSettings();
@@ -58,6 +60,10 @@ public static class ServiceCollectionExtension
         {
             busConfig.SetKebabCaseEndpointNameFormatter(); //user-created-event
             busConfig.AddConsumer<MatchNewConsumer>();
+            //busConfig.AddConsumer<MatchStatusUpdateConsumer>();
+            busConfig.AddConsumer<MatchCancelConsumer>();
+            busConfig.AddConsumer<MatchStartConsumer>();
+            busConfig.AddConsumer<MatchEndConsumer>();
 
 #if DEBUG
             var settings = new MessageBrokerSettings();
@@ -68,10 +74,16 @@ public static class ServiceCollectionExtension
 #endif
             busConfig.UsingRabbitMq((context, configuration) =>
             {
+
                 configuration.Host(new Uri(settings.Host!), h =>
                 {
                     h.Username(settings.Username!);
                     h.Password(settings.Password!);
+                });
+
+                configuration.ReceiveEndpoint("match-cancel-server", e =>
+                {
+                    e.ConfigureConsumer<MatchCancelConsumer>(context);
                 });
 
                 configuration.UseInMemoryOutbox(context);
@@ -99,7 +111,11 @@ public static class ServiceCollectionExtension
         services.AddSingleton<IConnectionMultiplexer>(sp =>
             ConnectionMultiplexer.Connect(config));
 
-        services.AddSignalR()
+        services.AddSignalR(option =>
+        {
+            option.KeepAliveInterval = TimeSpan.FromSeconds(5);
+            option.ClientTimeoutInterval = TimeSpan.FromSeconds(15);
+        })
         .AddStackExchangeRedis(o =>
         {
             o.ConnectionFactory = async writer =>

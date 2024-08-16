@@ -20,11 +20,11 @@ public class TokenGenerationService : ITokenGenerationService
         _logger = logger;
     }
 
-    public async Task<string?> GetTokenServer (string serverId)
+    public async Task<string?> GetTokenServer (string serverId, string matchId)
     {
         try
         {
-            var response = await _client.GetResponse<ServerTokenResponse>(new ServerTokenRequest { ServerId = serverId });
+            var response = await _client.GetResponse<ServerTokenResponse>(new ServerTokenRequest { MatchId = matchId, ServerId = serverId });
             return response.Message.Token;
         }
         catch (RequestTimeoutException ex)

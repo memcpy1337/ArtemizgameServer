@@ -64,12 +64,10 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
         return EdgeGapJsonHelper<EdgeGapDeploymentResult>.Deserialize(response);
     }
 
-    public async Task<bool> DestroyDeploy(string serverId)
+    public async Task DestroyDeploy(string requestId)
     {
-        var uri = $"stop/{serverId}";
+        var uri = $"{_config.Data!.DeleteUrl}/{requestId}";
 
         var httpResponse = await _httpClient.DeleteAsync(uri);
-
-        return true;
     }
 }
