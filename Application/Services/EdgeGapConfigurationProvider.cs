@@ -19,6 +19,7 @@ public class EdgeGapConfigurationProvider
             AppName = configuration.GetValue<string>("EdgeGapConfiguration:AppName"),
             AppVersion = configuration.GetValue<string>("EdgeGapConfiguration:AppVersion"),
             DeployUrl = configuration.GetValue<string>("EdgeGapConfiguration:DeployUrl"),
+            DeleteUrl = configuration.GetValue<string>("EdgeGapConfiguration:DeleteUrl"),
             WebHookUrl = configuration.GetValue<string>("EdgeGapConfiguration:WebHookUrl")
         };
     }

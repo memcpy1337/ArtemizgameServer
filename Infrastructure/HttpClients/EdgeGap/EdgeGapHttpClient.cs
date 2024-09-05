@@ -66,7 +66,6 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
 
     public async Task DestroyDeploy(string requestId)
     {
-        _logger.LogInformation(JsonConvert.SerializeObject(_config.Data));
         var uri = $"{_config.Data!.DeleteUrl}/{requestId}";
 
         var httpResponse = await _httpClient.DeleteAsync(uri);
