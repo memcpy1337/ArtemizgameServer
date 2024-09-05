@@ -48,6 +48,7 @@ public static class ServiceCollectionExtension
 #else
         var edgeGapStringSettings = Environment.GetEnvironmentVariable("EdgeGapSettings");
         var edgeGapSettings = JsonConvert.DeserializeObject<EdgeGapSettings>(edgeGapStringSettings);
+         Console.WriteLine(edgeGapStringSettings);
 #endif
 
         services.AddHttpClient<IEdgeGapHttpClient, EdgeGapHttpClient>(client =>
