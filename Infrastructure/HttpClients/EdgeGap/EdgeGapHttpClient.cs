@@ -71,6 +71,8 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
         var httpResponse = await _httpClient.DeleteAsync(uri);
 
         if (!httpResponse.IsSuccessStatusCode)
-            _logger.LogError($"Error HTTP request remove deployment: {httpResponse.ReasonPhrase}. {httpResponse.StatusCode.ToString()}");
+        {
+            _logger.LogError($"Error HTTP request remove deployment: {httpResponse.ReasonPhrase}. {httpResponse.StatusCode.ToString()}. {uri}.");
+        }
     }
 }
