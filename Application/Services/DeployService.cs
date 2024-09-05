@@ -79,9 +79,14 @@ public class DeployService : IDeployService
     {
         await _serverRepository.SetConnectionData(deploymentId, new ConnectionData() { Ip = address, Port = port });
 
-        var data = await _serverRepository.GetByDeployId(deploymentId);
+        var server = await _serverRepository.GetByDeployId(deploymentId);
 
-        await _deploymentPublisher.DeploymentConnectionDataUpdate(data.ServerId, data.MatchId, address, port);
+        if (server == null) 
+        {
+            return;
+        }
+
+        await _deploymentPublisher.DeploymentConnectionDataUpdate(server.ServerId, server.MatchId, address, port);
     }
 
     public async Task UpdateStatus(string deploymentId, ServerStatus newStatus)
