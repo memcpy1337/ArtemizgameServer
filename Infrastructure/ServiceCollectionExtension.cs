@@ -14,6 +14,7 @@ using MassTransit.EntityFrameworkCoreIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
@@ -41,10 +42,8 @@ public static class ServiceCollectionExtension
         services.AddTransient<IServerNotifierService, ServerNotifierService>();
 
 #if DEBUG
-        var edgeGapSettings = new EdgeGapSettings();
-        configuration.GetSection("EdgeGapSettings").Bind(edgeGapSettings);
-        edgeGapSettings.BaseUrl = configuration.GetValue<string>("EdgeGapSettings:BaseUrl");
-        edgeGapSettings.Token = configuration.GetValue<string>("EdgeGapSettings:Token");
+        var edgeGapStringSettings = Environment.GetEnvironmentVariable("EdgeGapSettings");
+        var edgeGapSettings = JsonConvert.DeserializeObject<EdgeGapSettings>(edgeGapStringSettings);
 #else
         var edgeGapStringSettings = Environment.GetEnvironmentVariable("EdgeGapSettings");
         var edgeGapSettings = JsonConvert.DeserializeObject<EdgeGapSettings>(edgeGapStringSettings);
@@ -66,8 +65,8 @@ public static class ServiceCollectionExtension
             busConfig.AddConsumer<MatchEndConsumer>();
 
 #if DEBUG
-            var settings = new MessageBrokerSettings();
-            configuration.GetSection("MessageBroker").Bind(settings);
+            var stringSettings = Environment.GetEnvironmentVariable("MessageBroker");
+            var settings = JsonConvert.DeserializeObject<MessageBrokerSettings>(stringSettings);
 #else
             var stringSettings = Environment.GetEnvironmentVariable("MessageBroker");
             var settings = JsonConvert.DeserializeObject<MessageBrokerSettings>(stringSettings);
@@ -94,8 +93,8 @@ public static class ServiceCollectionExtension
 
 
 #if DEBUG
-        var redisSettings = new RedisSettings();
-        configuration.GetSection("RedisSettings").Bind(redisSettings);
+        var redisStringSettings = Environment.GetEnvironmentVariable("RedisSettings");
+        var redisSettings = JsonConvert.DeserializeObject<RedisSettings>(redisStringSettings);
 #else
         var redisStringSettings = Environment.GetEnvironmentVariable("RedisSettings");
         var redisSettings = JsonConvert.DeserializeObject<RedisSettings>(redisStringSettings);
@@ -118,6 +117,8 @@ public static class ServiceCollectionExtension
         })
         .AddStackExchangeRedis(o =>
         {
+            o.Configuration.ChannelPrefix = "ServerM";
+
             o.ConnectionFactory = async writer =>
             {
                 var config = new ConfigurationOptions
@@ -152,7 +153,7 @@ public static class ServiceCollectionExtension
             {
                 string connString = string.Empty;
 #if DEBUG
-                connString = configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
+                connString = Environment.GetEnvironmentVariable("CONNSTRING");
 #else
                 connString = Environment.GetEnvironmentVariable("CONNSTRING");
 #endif

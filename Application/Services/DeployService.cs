@@ -71,7 +71,7 @@ public class DeployService : IDeployService
         await _deploymentPublisher.DeploymentSuccess(match.MatchId);
 
 #if DEBUG
-        await SetConnectionData(deploymentResult.RequestId, "127.0.0.1", 7777); 
+        await SetConnectionData(deploymentResult.RequestId, "95.154.71.14", 7777); 
 #endif
     }
 
