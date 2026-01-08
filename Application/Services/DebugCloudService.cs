@@ -15,12 +15,22 @@ public class DebugCloudService : ICloudServiceProvider<DebugDeploymentResult>
 {
     public IServerHttpClient<DebugDeploymentResult> HttpClient { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+    public Task CreateNewVersion(string versionTag, string registry, string imageName)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task DeleteServer(string matchId)
     {
         return Task.CompletedTask;
     }
 
-    public async Task<DebugDeploymentResult> RequestNewServer(MatchNewDTO match, string serverId, string serverToken)
+    public Task DeleteVersion(string versionTag)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<DebugDeploymentResult> RequestNewServer(MatchNewDTO match, string serverId, string serverToken, string versionServer = "123")
     {
         Random rnd = new Random();
         var data = new DebugDeploymentResult() { RequestId = $"{rnd.Next(100000, 999999)}", ErrorMsg = null };

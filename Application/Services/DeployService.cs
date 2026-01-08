@@ -47,10 +47,11 @@ public class DeployService : IDeployService
             return;
         }
 
+        var version = await _serverRepository.GetServerVersions();
 #if !DEBUG
-        var deploymentResult = await _cloudServiceProvider.RequestNewServer(match, serverId, serverToken);
+        var deploymentResult = await _cloudServiceProvider.RequestNewServer(match, serverId, serverToken, version.First().Version);
 #else
-        var deploymentResult = await _debugCloudProvider.RequestNewServer(match, serverId, serverToken);
+        var deploymentResult = await _debugCloudProvider.RequestNewServer(match, serverId, serverToken, "123");
 #endif
 
         if (string.IsNullOrEmpty(deploymentResult.ErrorMsg) == false)

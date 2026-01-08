@@ -12,4 +12,6 @@ public interface IServerHttpClient<T> where T : DeploymentResult
 {
     Task<T> NewDeployment(GameTypeEnum gameType, string serverId, string serverToken, string appName, string appVersion, List<string> ipClients, string webHook);
     Task DestroyDeploy(string requestId);
+    Task CreateNewVersion(string appName, string versionTag, string registry, string imageName);
+    Task DeleteVersion(string appName, string versionToDelete);
 }

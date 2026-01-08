@@ -33,6 +33,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<ICloudServiceProvider<DebugDeploymentResult>, DebugCloudService>();
         services.AddScoped<IDeployService, DeployService>();
         services.AddScoped<IServerService, ServerService>();
+        services.AddScoped<IContiniousMonitoringService, ContiniousMonitoringService>();
 
         services.AddScoped<IMapper, ServiceMapper>();
         services.AddSingleton<EdgeGapConfigurationProvider>();

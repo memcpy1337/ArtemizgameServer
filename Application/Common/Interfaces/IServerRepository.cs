@@ -17,4 +17,6 @@ public interface IServerRepository
     Task<Server> GetByServerId(string serverId);
     Task SetServerInactive(string serverId);
     Task<Server?> GetByMatchId(string matchId);
+    Task NewVersion(GameVersion gameVersion);
+    Task<List<GameVersion>> GetServerVersions();
 }

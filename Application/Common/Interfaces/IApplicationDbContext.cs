@@ -6,6 +6,7 @@ using Domain.Entities;
 public interface IApplicationDbContext
 {
     public DbSet<Server> Servers { get; set; }
+    public DbSet<GameVersion> GameVersions { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

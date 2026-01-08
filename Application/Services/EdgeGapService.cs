@@ -27,7 +27,7 @@ public sealed class EdgeGapService : ICloudServiceProvider<EdgeGapDeploymentResu
         await HttpClient.DestroyDeploy(requestId);
     }
 
-    public async Task<EdgeGapDeploymentResult> RequestNewServer(MatchNewDTO match, string serverId, string serverToken)
+    public async Task<EdgeGapDeploymentResult> RequestNewServer(MatchNewDTO match, string serverId, string serverToken, string versionServer)
     {
         var deploymentData = await HttpClient.NewDeployment(
             match.GameType,
@@ -40,5 +40,23 @@ public sealed class EdgeGapService : ICloudServiceProvider<EdgeGapDeploymentResu
         );
 
         return deploymentData;
+    }
+
+    public async Task CreateNewVersion(string versionTag, string registry, string imageName)
+    {
+        await HttpClient.CreateNewVersion(
+            _configProvider.Data!.AppName!,
+            versionTag,
+            registry,
+            imageName
+        );
+    }
+
+    public async Task DeleteVersion(string versionTag)
+    {
+        await HttpClient.DeleteVersion(
+            _configProvider.Data!.AppName!,
+            versionTag
+        );
     }
 }

@@ -19,6 +19,18 @@ public class ServerRepository : IServerRepository
         _context = context;
     }
 
+    public async Task NewVersion(GameVersion gameVersion)
+    {
+        await _context.GameVersions.AddAsync(gameVersion);
+
+        await _context.SaveChangesAsync(CancellationToken.None);
+    }
+
+    public async Task<List<GameVersion>> GetServerVersions()
+    {
+        return await _context.GameVersions.OrderByDescending(v => v.ReleaseDate).Take(10).ToListAsync();
+    }
+
     public async Task Create(Server server)
     {
         await _context.Servers.AddAsync(server);
