@@ -45,7 +45,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IServerHttpClient<EdgeGapDeploymentResult>, EdgeGapHttpClient>();
         services.AddTransient<IServerNotifierService, ServerNotifierService>();
 
-#if !DEBUG
+#if DEBUG
         var edgeGapSettings = new EdgeGapSettings();
         configuration.GetSection("EdgeGapSettings").Bind(edgeGapSettings);
         edgeGapSettings.BaseUrl = configuration.GetValue<string>("EdgeGapSettings:BaseUrl");
