@@ -8,7 +8,7 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
     <DockerfileContext>..\..\..\CrewMates</DockerfileContext>
-    <UserSecretsId>849316f5-445b-4e3f-a675-031b5bfa387d</UserSecretsId>
+    <UserSecretsId>9e861674-6ceb-4cb7-8a8e-74a10a94cfc0</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -14,7 +14,6 @@ using MassTransit.EntityFrameworkCoreIntegration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
@@ -34,6 +33,7 @@ public static class ServiceCollectionExtension
     /// <param name="configuration"><see cref="IConfiguration"/> Interface</param>
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+
         services.AddTransient<IDeploymentPublisher, DeploymentPublisher>();
         services.AddTransient<IServerPublisher, ServerPublisher>();
         services.AddTransient<IServerRepository, ServerRepository>();
@@ -42,8 +42,10 @@ public static class ServiceCollectionExtension
         services.AddTransient<IServerNotifierService, ServerNotifierService>();
 
 #if DEBUG
-        var edgeGapStringSettings = Environment.GetEnvironmentVariable("EdgeGapSettings");
-        var edgeGapSettings = JsonConvert.DeserializeObject<EdgeGapSettings>(edgeGapStringSettings);
+        var edgeGapSettings = new EdgeGapSettings();
+        configuration.GetSection("EdgeGapSettings").Bind(edgeGapSettings);
+        edgeGapSettings.BaseUrl = configuration.GetValue<string>("EdgeGapSettings:BaseUrl");
+        edgeGapSettings.Token = configuration.GetValue<string>("EdgeGapSettings:Token");
 #else
         var edgeGapStringSettings = Environment.GetEnvironmentVariable("EdgeGapSettings");
         var edgeGapSettings = JsonConvert.DeserializeObject<EdgeGapSettings>(edgeGapStringSettings);
@@ -65,8 +67,10 @@ public static class ServiceCollectionExtension
             busConfig.AddConsumer<MatchEndConsumer>();
 
 #if DEBUG
-            var stringSettings = Environment.GetEnvironmentVariable("MessageBroker");
-            var settings = JsonConvert.DeserializeObject<MessageBrokerSettings>(stringSettings);
+            var settings = new MessageBrokerSettings();
+            configuration.GetSection("MessageBroker").Bind(settings);
+
+            Console.WriteLine(settings.Username);
 #else
             var stringSettings = Environment.GetEnvironmentVariable("MessageBroker");
             var settings = JsonConvert.DeserializeObject<MessageBrokerSettings>(stringSettings);
@@ -93,12 +97,14 @@ public static class ServiceCollectionExtension
 
 
 #if DEBUG
-        var redisStringSettings = Environment.GetEnvironmentVariable("RedisSettings");
-        var redisSettings = JsonConvert.DeserializeObject<RedisSettings>(redisStringSettings);
+        var redisSettings = new RedisSettings();
+        configuration.GetSection("RedisSettings").Bind(redisSettings);
+        Console.WriteLine("Redis Host: " + redisSettings.Host);
 #else
         var redisStringSettings = Environment.GetEnvironmentVariable("RedisSettings");
         var redisSettings = JsonConvert.DeserializeObject<RedisSettings>(redisStringSettings);
 #endif
+
         var config = new ConfigurationOptions
         {
             EndPoints = { redisSettings.Host },
@@ -117,8 +123,6 @@ public static class ServiceCollectionExtension
         })
         .AddStackExchangeRedis(o =>
         {
-            o.Configuration.ChannelPrefix = "ServerM";
-
             o.ConnectionFactory = async writer =>
             {
                 var config = new ConfigurationOptions
@@ -153,7 +157,7 @@ public static class ServiceCollectionExtension
             {
                 string connString = string.Empty;
 #if DEBUG
-                connString = Environment.GetEnvironmentVariable("CONNSTRING");
+                connString = configuration.GetSection("ConnectionStrings:DefaultConnection").Value;
 #else
                 connString = Environment.GetEnvironmentVariable("CONNSTRING");
 #endif
