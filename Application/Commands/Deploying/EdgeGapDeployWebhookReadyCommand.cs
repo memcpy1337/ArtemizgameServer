@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 namespace Application.Commands.Deploying;
 
 
-public record EdgeGapDeployWebhookCommand(EdgeGapDeploymentWebhookModel WebHookData) : IRequestWrapper<Unit>;
+public record EdgeGapDeployWebhookReadyCommand(EdgeGapDeploymentWebhookModel WebHookData) : IRequestWrapper<Unit>;
 
-internal sealed class EdgeGapDeployWebhookCommandHandler : IHandlerWrapper<EdgeGapDeployWebhookCommand, Unit>
+internal sealed class EdgeGapDeployWebhookCommandHandler : IHandlerWrapper<EdgeGapDeployWebhookReadyCommand, Unit>
 {
     private readonly IDeployService _deployService;
     private readonly ILogger<EdgeGapDeploymentWebhookModel> _logger;
@@ -28,22 +28,15 @@ internal sealed class EdgeGapDeployWebhookCommandHandler : IHandlerWrapper<EdgeG
         _logger = logger;
     }
 
-    public async Task<IResponse<Unit>> Handle(EdgeGapDeployWebhookCommand request, CancellationToken cancellationToken)
+    public async Task<IResponse<Unit>> Handle(EdgeGapDeployWebhookReadyCommand request, CancellationToken cancellationToken)
     {
         var data = request.WebHookData;
 
-        _logger.LogInformation($"NEW STATUS FOR {request.WebHookData.RequestId}. STATUS: {request.WebHookData.CurrentStatus}");
+        _logger.LogInformation($"READY DEPLOY {request.WebHookData.RequestId}");
 
-        var newState = StatusFromStringToEnum(data.CurrentStatus!);
+        await _deployService.SetConnectionData(data.RequestId!, data.Address!, data.Ports!.GamePort!.External);
 
-        switch(newState)
-        {
-            case ServerStatus.Ready:
-                await _deployService.SetConnectionData(data.RequestId!, data.Address!, data.Ports!.GamePort!.External);
-                break;
-        }
-
-        await _deployService.UpdateStatus(data.RequestId!, newState);
+        await _deployService.UpdateStatus(data.RequestId!, ServerStatus.Ready);
 
         return Response.Success(Unit.Value);
     }

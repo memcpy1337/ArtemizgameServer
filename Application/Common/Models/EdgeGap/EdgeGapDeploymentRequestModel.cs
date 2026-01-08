@@ -17,10 +17,10 @@ public class EdgeGapDeploymentRequestModel
     public required List<User> Users { get; set; }
     [JsonPropertyName("webhook_on_ready")]
     public required WebhookData WebhookUrlReady { get; set; }
-    [JsonPropertyName("webhook_on_error")]
-    public required WebhookData WebhookUrlError { get; set; }
-    [JsonPropertyName("webhook_on_terminated")]
-    public required WebhookData WebhookUrlTerminated { get; set; }
+    //[JsonPropertyName("webhook_on_error")]
+    //public required WebhookData WebhookUrlError { get; set; }
+    //[JsonPropertyName("webhook_on_terminated")]
+    //public required WebhookData WebhookUrlTerminated { get; set; }
     [JsonPropertyName("environment_variables")]
     public required List<EnvVar> EnvVars { get; set; }
 }
