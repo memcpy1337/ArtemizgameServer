@@ -72,7 +72,8 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
 
         if (!httpResponse.IsSuccessStatusCode)
         {
-            _logger.LogError($"Error while deployment. Code: {httpResponse.StatusCode.ToString()}");
+            var body = await httpResponse.Content.ReadAsStringAsync();
+            _logger.LogError($"Error while deployment. Code: {httpResponse.StatusCode.ToString()}. Text: {body}");
             return new EdgeGapDeploymentResult() { RequestId = string.Empty, ErrorMsg = httpResponse.StatusCode.ToString() };
         }
 
@@ -89,7 +90,8 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
 
         if (!httpResponse.IsSuccessStatusCode)
         {
-            _logger.LogError($"Error HTTP request remove deployment: {httpResponse.ReasonPhrase}. {httpResponse.StatusCode.ToString()}. {uri}.");
+            var body = await httpResponse.Content.ReadAsStringAsync();
+            _logger.LogError($"Error HTTP request remove deployment: {httpResponse.ReasonPhrase}. {httpResponse.StatusCode.ToString()}. {uri}. Text: {body}");
         }
     }
 
@@ -99,7 +101,8 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
         var httpResponse = await _httpClient.DeleteAsync(uri);
         if (!httpResponse.IsSuccessStatusCode)
         {
-            _logger.LogError($"Error while creating new version. Code: {httpResponse.StatusCode.ToString()}");
+            var body = await httpResponse.Content.ReadAsStringAsync();
+            _logger.LogError($"Error while delete version. Code: {httpResponse.StatusCode.ToString()}. Text: {body} ");
             throw new Exception($"Error deleting version {versionToDelete} of app {appName}");
         }
     }
@@ -135,7 +138,8 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
         var httpResponse = await _httpClient.PostAsync(uri, data);
         if (!httpResponse.IsSuccessStatusCode)
         {
-            _logger.LogError($"Error while creating new version. Code: {httpResponse.StatusCode.ToString()}");
+            var body = await httpResponse.Content.ReadAsStringAsync();
+            _logger.LogError($"Error while creating new version. Code: {httpResponse.StatusCode.ToString()}. Text: {body}");
             throw new Exception($"Error creating new version {versionTag} of app {appName}");
         }
     }
