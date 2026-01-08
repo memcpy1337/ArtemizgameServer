@@ -34,7 +34,7 @@ public sealed class EdgeGapService : ICloudServiceProvider<EdgeGapDeploymentResu
             serverId,
             serverToken,
             _configProvider.Data!.AppName!, 
-            _configProvider.Data!.AppVersion!, 
+            versionServer, 
             match.UsersIp, 
             _configProvider.Data!.WebHookUrl!
         );
