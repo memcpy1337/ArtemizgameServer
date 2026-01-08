@@ -10,4 +10,6 @@ public class EdgeGapSettings
 {
     public string BaseUrl;
     public string Token;
+    public string RegistryUserName;
+    public string RegistryPassword;
 }

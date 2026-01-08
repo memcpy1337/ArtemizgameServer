@@ -4,6 +4,7 @@ using Application.Common.Models.EdgeGap;
 using Application.Models.EdgeGap;
 using Application.Services;
 using Contracts.Common.Models.Enums;
+using Infrastructure.Common.Settings;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -109,6 +110,9 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
 
     public async Task CreateNewVersion(string appName, string versionTag, string registry, string imageName)
     {
+        var edgeGapStringSettings = Environment.GetEnvironmentVariable("EdgeGapSettings");
+        var edgeGapSettings = JsonConvert.DeserializeObject<EdgeGapSettings>(edgeGapStringSettings);
+
         var content = new EdgeGapNewVersionRequestModel
         {
             Name = versionTag,
@@ -116,8 +120,8 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
             DockerRepository = registry,
             DockerTag = versionTag,
             ForceCache = false,
-            UserName = _config.Data!.RegistryUserName!,
-            Password = _config.Data!.RegistryPassword!,
+            UserName = edgeGapSettings.RegistryUserName,
+            Password = edgeGapSettings.RegistryPassword,
             MaxDuration = 60,
             VerifyImage = true,
             Ports =
