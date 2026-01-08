@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Settings;
 using Application.Models.EdgeGap;
 using Infrastructure.Common.Models;
 using Infrastructure.Common.Settings;
@@ -15,9 +16,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Text.Json;
 
 namespace Infrastructure;
 
@@ -41,14 +45,57 @@ public static class ServiceCollectionExtension
         services.AddScoped<IServerHttpClient<EdgeGapDeploymentResult>, EdgeGapHttpClient>();
         services.AddTransient<IServerNotifierService, ServerNotifierService>();
 
-#if DEBUG
+#if !DEBUG
         var edgeGapSettings = new EdgeGapSettings();
         configuration.GetSection("EdgeGapSettings").Bind(edgeGapSettings);
         edgeGapSettings.BaseUrl = configuration.GetValue<string>("EdgeGapSettings:BaseUrl");
         edgeGapSettings.Token = configuration.GetValue<string>("EdgeGapSettings:Token");
+        
 #else
         var edgeGapStringSettings = Environment.GetEnvironmentVariable("EdgeGapSettings");
         var edgeGapSettings = JsonConvert.DeserializeObject<EdgeGapSettings>(edgeGapStringSettings);
+
+        var dict = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(edgeGapStringSettings,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        EdgeGapConfiguration cfgFromJson = new();
+        if (!string.IsNullOrWhiteSpace(edgeGapStringSettings))
+        {
+            if (dict is not null)
+            {
+
+                cfgFromJson = new EdgeGapConfiguration
+                {
+                    AppName = dict.GetValueOrDefault("AppName"),
+                    AppVersion = dict.GetValueOrDefault("AppVersion"),
+                    DeployUrl = dict.GetValueOrDefault("DeployUrl"),
+                    DeleteUrl = dict.GetValueOrDefault("DeleteUrl"),
+                    WebHookUrl = dict.GetValueOrDefault("WebHookUrl"),
+                    CreateVersionUrl = dict.GetValueOrDefault("CreateVersionUrl"),
+                    DeleteVersionUrl = dict.GetValueOrDefault("DeleteVersionUrl"),
+                    RegistryUserName = dict.GetValueOrDefault("RegistryUserName"),
+                    RegistryPassword = dict.GetValueOrDefault("RegistryPassword"),
+                };
+            }
+        }
+
+        services.AddOptions<EdgeGapConfiguration>()
+            .Configure<IConfiguration>((opt, conf) =>
+            {
+                // base from JSON
+                opt.AppName = cfgFromJson.AppName;
+                opt.AppVersion = cfgFromJson.AppVersion;
+                opt.DeployUrl = cfgFromJson.DeployUrl;
+                opt.DeleteUrl = cfgFromJson.DeleteUrl;
+                opt.WebHookUrl = cfgFromJson.WebHookUrl;
+                opt.CreateVersionUrl = cfgFromJson.CreateVersionUrl;
+                opt.DeleteVersionUrl = cfgFromJson.DeleteVersionUrl;
+                opt.RegistryUserName = cfgFromJson.RegistryUserName;
+                opt.RegistryPassword = cfgFromJson.RegistryPassword;
+
+                // overrides from normal configuration, если есть
+                conf.GetSection("EdgeGapConfiguration").Bind(opt);
+            });
 #endif
 
         services.AddHttpClient<IEdgeGapHttpClient, EdgeGapHttpClient>(client =>
