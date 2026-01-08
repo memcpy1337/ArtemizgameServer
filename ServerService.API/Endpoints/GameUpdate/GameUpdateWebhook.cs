@@ -9,7 +9,7 @@ using ServerService.API.Routes;
 
 namespace API.Endpoints.Deploying;
 
-[Route(DeployingRoute.EdgeGapWebhook)]
+[Route(DeployingRoute.GameUpdateWebhook)]
 public class GameUpdateWebhook : EndpointBaseAsync
     .WithRequest<GameUpdateRequestModel>
     .WithoutResult
