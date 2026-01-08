@@ -25,7 +25,7 @@ public class ContiniousMonitoringService : IContiniousMonitoringService
         if (versions.Count >= 2)
         {
             var previousVersionTag = versions
-                .OrderByDescending(v => v.Version)
+                .OrderByDescending(v => v.ReleaseDate)
                 .Skip(1)                              
                 .First()
                 .Version;

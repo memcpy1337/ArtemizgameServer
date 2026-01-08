@@ -48,9 +48,9 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
                     }
                 })
                 .ToList(),
-            WebhookUrlError = webHook,
-            WebhookUrlReady = webHook,
-            WebhookUrlTerminated = webHook,
+            WebhookUrlError = new WebhookData() { Url = webHook },
+            WebhookUrlReady = new WebhookData() { Url = webHook },
+            WebhookUrlTerminated = new WebhookData() { Url = webHook },
             EnvVars = new List<EnvVar>() { 
                 new EnvVar() 
                 { 
