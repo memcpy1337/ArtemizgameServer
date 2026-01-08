@@ -12,6 +12,8 @@ public class EdgeGapConfiguration
     public string? AppVersion { get; set; }
     public string? DeployUrl { get; set; }
     public string? DeleteUrl { get; set; }
+    public string? RegistryUserName { get; set; }
+    public string? RegistryPassword { get; set; }
     public string? WebHookUrl { get; set; }
     public string? CreateVersionUrl { get; set; }
     public string? DeleteVersionUrl { get; set; }

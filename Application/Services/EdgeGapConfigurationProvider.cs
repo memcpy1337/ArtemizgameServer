@@ -22,7 +22,9 @@ public class EdgeGapConfigurationProvider
             DeleteUrl = configuration.GetValue<string>("EdgeGapConfiguration:DeleteUrl"),
             WebHookUrl = configuration.GetValue<string>("EdgeGapConfiguration:WebHookUrl"),
             CreateVersionUrl = configuration.GetValue<string>("EdgeGapConfiguration:NewVersionUrl"),
-            DeleteVersionUrl = configuration.GetValue<string>("EdgeGapConfiguration:DeleteVersionUrl")
+            DeleteVersionUrl = configuration.GetValue<string>("EdgeGapConfiguration:DeleteVersionUrl"),
+            RegistryUserName = configuration.GetValue<string>("EdgeGapConfiguration:RegistryUserName"),
+            RegistryPassword = configuration.GetValue<string>("EdgeGapConfiguration:RegistryPassword")
         };
     }
 }

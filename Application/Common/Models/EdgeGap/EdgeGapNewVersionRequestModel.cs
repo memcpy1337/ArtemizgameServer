@@ -17,6 +17,10 @@ public class EdgeGapNewVersionRequestModel
     public required string DockerImage { get; set; }
     [JsonPropertyName("docker_tag")]
     public required string DockerTag { get; set; }
+    [JsonPropertyName("private_username")]
+    public required string UserName { get; set; }
+    [JsonPropertyName("private_token")]
+    public required string Password { get; set; }
     [JsonPropertyName("req_cpu")]
     public int ReqCpu { get; set; }
     [JsonPropertyName("req_memory")]

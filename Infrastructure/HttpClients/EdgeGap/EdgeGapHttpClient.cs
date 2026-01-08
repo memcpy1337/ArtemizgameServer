@@ -116,6 +116,8 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
             DockerRepository = registry,
             DockerTag = versionTag,
             ForceCache = false,
+            UserName = _config.Data!.RegistryUserName!,
+            Password = _config.Data!.RegistryPassword!,
             MaxDuration = 60,
             VerifyImage = true,
             Ports =
