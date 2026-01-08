@@ -43,7 +43,7 @@ public class EdgeGapDeploymentWebhookModel
 
 public class Ports
 {
-    [JsonPropertyName("Game Port")]
+    [JsonPropertyName("GamePort")]
     public GamePort? GamePort { get; set; }
 }
 

@@ -32,9 +32,9 @@ internal sealed class EdgeGapDeployWebhookCommandHandler : IHandlerWrapper<EdgeG
     {
         var data = request.WebHookData;
 
-        _logger.LogInformation($"NEW STATUS FOR {request.WebHookData.RequestId}. STATUS: {request.WebHookData.CurrentStatusLabel}");
+        _logger.LogInformation($"NEW STATUS FOR {request.WebHookData.RequestId}. STATUS: {request.WebHookData.CurrentStatus}");
 
-        var newState = StatusFromStringToEnum(data.CurrentStatusLabel!);
+        var newState = StatusFromStringToEnum(data.CurrentStatus!);
 
         switch(newState)
         {
@@ -50,6 +50,7 @@ internal sealed class EdgeGapDeployWebhookCommandHandler : IHandlerWrapper<EdgeG
 
     private ServerStatus StatusFromStringToEnum(string status)
     {
+        status = status.Replace("Status.", "");
         if (Enum.TryParse(typeof(ServerStatus), status, out var result))
         {
             return (ServerStatus)result;
