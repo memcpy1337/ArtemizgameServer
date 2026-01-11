@@ -129,7 +129,7 @@ public sealed class EdgeGapHttpClient : IEdgeGapHttpClient
                     PortNumber = 7770,
                     Protocol = "TCP_UDP",
                     TLS = false,
-                    WaitPortOpen = true,
+                    WaitPortOpen = false,
                     Name = "GamePort"
                 }
             ],
